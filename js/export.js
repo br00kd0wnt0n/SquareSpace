@@ -3,7 +3,7 @@
 import { render } from './renderer.js';
 
 const EXPORT_WIDTH = 4500;
-const EXPORT_HEIGHT = 5400;
+const EXPORT_HEIGHT = 4500;
 
 export function exportImage(state, format = 'png') {
   return new Promise((resolve, reject) => {
