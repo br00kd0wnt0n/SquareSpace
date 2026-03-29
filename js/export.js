@@ -1,53 +1,52 @@
-// export.js — High-resolution PNG/JPG export for Printify
+// export.js — High-resolution PNG/JPG export (SQUARE: 4500x4500)
 
-import { render } from './renderer.js';
+var EXPORT_SIZE = 4500;
 
-const EXPORT_WIDTH = 4500;
-const EXPORT_HEIGHT = 4500;
+function exportImage(state, format) {
+  format = format || 'png';
 
-export function exportImage(state, format = 'png') {
-  return new Promise((resolve, reject) => {
-    const canvas = document.createElement('canvas');
-    canvas.width = EXPORT_WIDTH;
-    canvas.height = EXPORT_HEIGHT;
+  return new Promise(function(resolve, reject) {
+    var canvas = document.createElement('canvas');
+    canvas.width = EXPORT_SIZE;
+    canvas.height = EXPORT_SIZE;
 
-    const ctx = canvas.getContext('2d');
+    var ctx = canvas.getContext('2d');
     if (!ctx) {
-      reject(new Error('Failed to create canvas context. Your device may not have enough memory.'));
+      reject(new Error('Failed to create canvas context.'));
       return;
     }
 
     try {
-      render(ctx, EXPORT_WIDTH, EXPORT_HEIGHT, state);
+      render(ctx, EXPORT_SIZE, state);
     } catch (e) {
       // Fallback to half resolution
-      canvas.width = EXPORT_WIDTH / 2;
-      canvas.height = EXPORT_HEIGHT / 2;
-      const ctx2 = canvas.getContext('2d');
-      render(ctx2, EXPORT_WIDTH / 2, EXPORT_HEIGHT / 2, state);
+      var half = EXPORT_SIZE / 2;
+      canvas.width = half;
+      canvas.height = half;
+      var ctx2 = canvas.getContext('2d');
+      render(ctx2, half, state);
     }
 
-    const mimeType = format === 'jpg' ? 'image/jpeg' : 'image/png';
-    const quality = format === 'jpg' ? 0.95 : undefined;
+    var mimeType = format === 'jpg' ? 'image/jpeg' : 'image/png';
+    var quality = format === 'jpg' ? 0.95 : undefined;
 
     canvas.toBlob(
-      (blob) => {
+      function(blob) {
         if (!blob) {
-          reject(new Error('Export failed — could not generate image'));
+          reject(new Error('Export failed'));
           return;
         }
 
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
         a.href = url;
-        a.download = `quilt-design-${state.pattern}-${Date.now()}.${format === 'jpg' ? 'jpg' : 'png'}`;
+        a.download = 'quilt-design-' + state.pattern + '-' + Date.now() + '.' + (format === 'jpg' ? 'jpg' : 'png');
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
 
-        setTimeout(() => URL.revokeObjectURL(url), 5000);
+        setTimeout(function() { URL.revokeObjectURL(url); }, 5000);
 
-        // Free memory
         canvas.width = 0;
         canvas.height = 0;
 

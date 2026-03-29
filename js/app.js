@@ -1,32 +1,26 @@
 // app.js — Main application: state, UI binding, and control logic
 
-import { PATTERNS, getPatternList } from './patterns.js';
-import { renderPreview } from './renderer.js';
-import { exportImage } from './export.js';
-
-// ─── Application State ────────────────────────────────────────
-
-const state = {
+// Application State
+var state = {
   pattern: 'nine-patch',
   colors: {
     primary: '#c0392b',
     secondary: '#2c3e50',
     accent: '#f39c12',
-    background: '#ecf0f1',
+    background: '#ecf0f1'
   },
   scale: 1.0,
   rotation: 0,
   border: {
     style: 'none',
     width: 0.05,
-    color: '#2c3e50',
+    color: '#2c3e50'
   },
-  patternOptions: {},
+  patternOptions: {}
 };
 
-// ─── Color Presets ─────────────────────────────────────────────
-
-const PRESETS = [
+// Color Presets
+var PRESETS = [
   { name: 'Traditional', colors: { primary: '#c0392b', secondary: '#2c3e50', accent: '#f39c12', background: '#ecf0f1' } },
   { name: 'Autumn', colors: { primary: '#d35400', secondary: '#8e3200', accent: '#f4a460', background: '#fdf5e6' } },
   { name: 'Patriotic', colors: { primary: '#b71c1c', secondary: '#1a237e', accent: '#f5f5f5', background: '#e3f2fd' } },
@@ -36,27 +30,25 @@ const PRESETS = [
   { name: 'Winter', colors: { primary: '#1565c0', secondary: '#0d47a1', accent: '#b3e5fc', background: '#e1f5fe' } },
   { name: 'Berry', colors: { primary: '#880e4f', secondary: '#4a148c', accent: '#f48fb1', background: '#fce4ec' } },
   { name: 'Sunset', colors: { primary: '#e65100', secondary: '#bf360c', accent: '#ffcc80', background: '#fff3e0' } },
-  { name: 'Ocean', colors: { primary: '#006064', secondary: '#004d40', accent: '#80cbc4', background: '#e0f2f1' } },
+  { name: 'Ocean', colors: { primary: '#006064', secondary: '#004d40', accent: '#80cbc4', background: '#e0f2f1' } }
 ];
 
-// ─── DOM Refs ──────────────────────────────────────────────────
+// DOM Refs
+var canvas = document.getElementById('preview-canvas');
+var patternSelector = document.getElementById('pattern-selector');
+var presetRow = document.getElementById('preset-palettes');
+var patternOptionsContainer = document.getElementById('pattern-options');
+var patternOptionsSection = document.getElementById('pattern-options-section');
+var previewInfo = document.getElementById('preview-info');
+var spinner = document.getElementById('export-spinner');
 
-const canvas = document.getElementById('preview-canvas');
-const patternSelector = document.getElementById('pattern-selector');
-const presetRow = document.getElementById('preset-palettes');
-const patternOptionsContainer = document.getElementById('pattern-options');
-const patternOptionsSection = document.getElementById('pattern-options-section');
-const previewInfo = document.getElementById('preview-info');
-const spinner = document.getElementById('export-spinner');
-
-// ─── Render Scheduling ────────────────────────────────────────
-
-let renderScheduled = false;
+// Render Scheduling
+var renderScheduled = false;
 
 function scheduleRender() {
   if (renderScheduled) return;
   renderScheduled = true;
-  requestAnimationFrame(() => {
+  requestAnimationFrame(function() {
     renderScheduled = false;
     renderPreview(canvas, state);
     updatePreviewInfo();
@@ -64,47 +56,45 @@ function scheduleRender() {
 }
 
 function updatePreviewInfo() {
-  const p = PATTERNS[state.pattern];
-  previewInfo.textContent = `${p ? p.name : state.pattern} — ${state.scale.toFixed(1)}x — ${state.rotation}°`;
+  var p = PATTERNS[state.pattern];
+  previewInfo.textContent = (p ? p.name : state.pattern) + ' — ' + state.scale.toFixed(1) + 'x — ' + state.rotation + '°';
 }
 
-// ─── Pattern Selector (thumbnails) ─────────────────────────────
-
+// Pattern Selector
 function initPatternSelector() {
-  const list = getPatternList();
+  var list = getPatternList();
   patternSelector.innerHTML = '';
 
-  list.forEach(({ key, name }) => {
-    const div = document.createElement('div');
-    div.className = `pattern-thumb${key === state.pattern ? ' active' : ''}`;
-    div.dataset.pattern = key;
-    div.title = name;
+  list.forEach(function(item) {
+    var div = document.createElement('div');
+    div.className = 'pattern-thumb' + (item.key === state.pattern ? ' active' : '');
+    div.dataset.pattern = item.key;
+    div.title = item.name;
 
-    const thumbCanvas = document.createElement('canvas');
+    var thumbCanvas = document.createElement('canvas');
     thumbCanvas.width = 80;
     thumbCanvas.height = 80;
     div.appendChild(thumbCanvas);
 
-    const label = document.createElement('span');
+    var label = document.createElement('span');
     label.className = 'thumb-label';
-    label.textContent = name;
+    label.textContent = item.name;
     div.appendChild(label);
 
-    // Draw thumbnail
-    const thumbCtx = thumbCanvas.getContext('2d');
-    const thumbCfg = {
+    var thumbCtx = thumbCanvas.getContext('2d');
+    var thumbCfg = {
       primary: '#c0392b',
       secondary: '#2c3e50',
       accent: '#f39c12',
       background: '#ecf0f1',
-      options: PATTERNS[key].defaultOptions,
+      options: PATTERNS[item.key].defaultOptions
     };
-    PATTERNS[key].draw(thumbCtx, 0, 0, 80, thumbCfg);
+    PATTERNS[item.key].draw(thumbCtx, 0, 0, 80, thumbCfg);
 
-    div.addEventListener('click', () => {
-      state.pattern = key;
+    div.addEventListener('click', function() {
+      state.pattern = item.key;
       state.patternOptions = {};
-      document.querySelectorAll('.pattern-thumb').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.pattern-thumb').forEach(function(el) { el.classList.remove('active'); });
       div.classList.add('active');
       buildPatternOptions();
       scheduleRender();
@@ -114,29 +104,34 @@ function initPatternSelector() {
   });
 }
 
-// ─── Color Presets ─────────────────────────────────────────────
-
+// Color Presets
 function initPresets() {
   presetRow.innerHTML = '';
-  PRESETS.forEach(preset => {
-    const btn = document.createElement('button');
+  PRESETS.forEach(function(preset) {
+    var btn = document.createElement('button');
     btn.className = 'preset-btn';
     btn.title = preset.name;
 
-    Object.values(preset.colors).forEach(color => {
-      const swatch = document.createElement('span');
+    var colorValues = [preset.colors.primary, preset.colors.secondary, preset.colors.accent, preset.colors.background];
+    colorValues.forEach(function(color) {
+      var swatch = document.createElement('span');
       swatch.className = 'preset-swatch';
       swatch.style.background = color;
       btn.appendChild(swatch);
     });
 
-    const nameEl = document.createElement('span');
+    var nameEl = document.createElement('span');
     nameEl.className = 'preset-name';
     nameEl.textContent = preset.name;
     btn.appendChild(nameEl);
 
-    btn.addEventListener('click', () => {
-      state.colors = { ...preset.colors };
+    btn.addEventListener('click', function() {
+      state.colors = {
+        primary: preset.colors.primary,
+        secondary: preset.colors.secondary,
+        accent: preset.colors.accent,
+        background: preset.colors.background
+      };
       syncColorPickers();
       scheduleRender();
     });
@@ -145,8 +140,7 @@ function initPresets() {
   });
 }
 
-// ─── Color Pickers ─────────────────────────────────────────────
-
+// Color Pickers
 function syncColorPickers() {
   document.getElementById('color-primary').value = state.colors.primary;
   document.getElementById('color-secondary').value = state.colors.secondary;
@@ -155,62 +149,58 @@ function syncColorPickers() {
 }
 
 function initColorPickers() {
-  ['primary', 'secondary', 'accent', 'background'].forEach(key => {
-    const input = document.getElementById(`color-${key}`);
-    input.addEventListener('input', (e) => {
+  ['primary', 'secondary', 'accent', 'background'].forEach(function(key) {
+    var input = document.getElementById('color-' + key);
+    input.addEventListener('input', function(e) {
       state.colors[key] = e.target.value;
       scheduleRender();
     });
   });
 }
 
-// ─── Scale Slider ──────────────────────────────────────────────
-
+// Scale Slider
 function initScaleSlider() {
-  const slider = document.getElementById('scale-slider');
-  const valueEl = document.getElementById('scale-value');
-  slider.addEventListener('input', () => {
+  var slider = document.getElementById('scale-slider');
+  var valueEl = document.getElementById('scale-value');
+  slider.addEventListener('input', function() {
     state.scale = parseFloat(slider.value);
     valueEl.textContent = state.scale.toFixed(1) + 'x';
     scheduleRender();
   });
 }
 
-// ─── Rotation Buttons ──────────────────────────────────────────
-
+// Rotation Buttons
 function initRotationBtns() {
-  document.querySelectorAll('.rot-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
+  document.querySelectorAll('.rot-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
       state.rotation = parseInt(btn.dataset.rot, 10);
-      document.querySelectorAll('.rot-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.rot-btn').forEach(function(b) { b.classList.remove('active'); });
       btn.classList.add('active');
       scheduleRender();
     });
   });
 }
 
-// ─── Border Controls ───────────────────────────────────────────
-
+// Border Controls
 function initBorderControls() {
-  document.getElementById('border-style').addEventListener('change', (e) => {
+  document.getElementById('border-style').addEventListener('change', function(e) {
     state.border.style = e.target.value;
     scheduleRender();
   });
-  document.getElementById('border-width').addEventListener('input', (e) => {
+  document.getElementById('border-width').addEventListener('input', function(e) {
     state.border.width = parseFloat(e.target.value);
     scheduleRender();
   });
-  document.getElementById('border-color').addEventListener('input', (e) => {
+  document.getElementById('border-color').addEventListener('input', function(e) {
     state.border.color = e.target.value;
     scheduleRender();
   });
 }
 
-// ─── Pattern-Specific Options ──────────────────────────────────
-
+// Pattern-Specific Options
 function buildPatternOptions() {
-  const p = PATTERNS[state.pattern];
-  const defs = p.optionsDef || [];
+  var p = PATTERNS[state.pattern];
+  var defs = p.optionsDef || [];
 
   if (defs.length === 0) {
     patternOptionsSection.style.display = 'none';
@@ -220,18 +210,20 @@ function buildPatternOptions() {
   patternOptionsSection.style.display = '';
   patternOptionsContainer.innerHTML = '';
 
-  defs.forEach(def => {
-    const row = document.createElement('div');
+  defs.forEach(function(def) {
+    var row = document.createElement('div');
     row.className = 'control-row';
 
-    const label = document.createElement('label');
+    var label = document.createElement('label');
     label.textContent = def.label;
     row.appendChild(label);
 
-    const currentValue = state.patternOptions[def.key] ?? p.defaultOptions[def.key] ?? def.min;
+    var currentValue = state.patternOptions[def.key] !== undefined
+      ? state.patternOptions[def.key]
+      : (p.defaultOptions[def.key] !== undefined ? p.defaultOptions[def.key] : def.min);
 
     if (def.type === 'range') {
-      const input = document.createElement('input');
+      var input = document.createElement('input');
       input.type = 'range';
       input.min = def.min;
       input.max = def.max;
@@ -239,11 +231,11 @@ function buildPatternOptions() {
       input.value = currentValue;
       row.appendChild(input);
 
-      const span = document.createElement('span');
+      var span = document.createElement('span');
       span.textContent = currentValue;
       row.appendChild(span);
 
-      input.addEventListener('input', () => {
+      input.addEventListener('input', function() {
         state.patternOptions[def.key] = parseFloat(input.value);
         span.textContent = input.value;
         scheduleRender();
@@ -254,44 +246,39 @@ function buildPatternOptions() {
   });
 }
 
-// ─── Export ────────────────────────────────────────────────────
-
+// Export
 function initExport() {
-  document.getElementById('export-png').addEventListener('click', async () => {
+  document.getElementById('export-png').addEventListener('click', function() {
     spinner.classList.remove('hidden');
-    try {
-      await exportImage(state, 'png');
-    } catch (e) {
-      alert('Export failed: ' + e.message);
-    } finally {
+    exportImage(state, 'png').then(function() {
       spinner.classList.add('hidden');
-    }
+    }).catch(function(e) {
+      alert('Export failed: ' + e.message);
+      spinner.classList.add('hidden');
+    });
   });
 
-  document.getElementById('export-jpg').addEventListener('click', async () => {
+  document.getElementById('export-jpg').addEventListener('click', function() {
     spinner.classList.remove('hidden');
-    try {
-      await exportImage(state, 'jpg');
-    } catch (e) {
-      alert('Export failed: ' + e.message);
-    } finally {
+    exportImage(state, 'jpg').then(function() {
       spinner.classList.add('hidden');
-    }
+    }).catch(function(e) {
+      alert('Export failed: ' + e.message);
+      spinner.classList.add('hidden');
+    });
   });
 }
 
-// ─── Window Resize ─────────────────────────────────────────────
-
+// Window Resize
 function initResize() {
-  let resizeTimer;
-  window.addEventListener('resize', () => {
+  var resizeTimer;
+  window.addEventListener('resize', function() {
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(scheduleRender, 100);
   });
 }
 
-// ─── Init ──────────────────────────────────────────────────────
-
+// Init
 function init() {
   initPatternSelector();
   initPresets();

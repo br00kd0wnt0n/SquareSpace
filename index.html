@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SquareSpace — T-Shirt Quilt Designer</title>
-  <link rel="stylesheet" href="css/styles.css?v=2">
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
   <header>
@@ -26,22 +26,18 @@
           <label>
             <span class="color-label">Primary</span>
             <input type="color" id="color-primary" value="#c0392b">
-            <span class="swatch" id="swatch-primary"></span>
           </label>
           <label>
             <span class="color-label">Secondary</span>
             <input type="color" id="color-secondary" value="#2c3e50">
-            <span class="swatch" id="swatch-secondary"></span>
           </label>
           <label>
             <span class="color-label">Accent</span>
             <input type="color" id="color-accent" value="#f39c12">
-            <span class="swatch" id="swatch-accent"></span>
           </label>
           <label>
             <span class="color-label">Background</span>
             <input type="color" id="color-background" value="#ecf0f1">
-            <span class="swatch" id="swatch-background"></span>
           </label>
         </div>
       </section>
@@ -92,15 +88,15 @@
 
       <section class="control-group export-group">
         <h2>Export</h2>
-        <p class="export-info">4500 × 4500 px @ 300 DPI</p>
-        <p class="export-info-sub">Printify back-of-shirt ready</p>
+        <p class="export-info">4500 x 4500 px @ 300 DPI</p>
+        <p class="export-info-sub">Square format — Printify ready</p>
         <div class="export-btns">
           <button id="export-png" class="btn btn-primary">Download PNG</button>
           <button id="export-jpg" class="btn btn-secondary">Download JPG</button>
         </div>
         <div id="export-spinner" class="spinner hidden">
           <div class="spinner-ring"></div>
-          <span>Rendering high-res export…</span>
+          <span>Rendering high-res export...</span>
         </div>
       </section>
     </aside>
@@ -113,9 +109,9 @@
     </section>
   </main>
 
-  <script type="module" src="js/patterns.js?v=2"></script>
-  <script type="module" src="js/renderer.js?v=2"></script>
-  <script type="module" src="js/export.js?v=2"></script>
-  <script type="module" src="js/app.js?v=2"></script>
+  <script src="js/patterns.js"></script>
+  <script src="js/renderer.js"></script>
+  <script src="js/export.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
