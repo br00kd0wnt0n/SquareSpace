@@ -127,8 +127,9 @@ export function renderPreview(canvas, state) {
   const wrapper = canvas.parentElement;
   const dpr = window.devicePixelRatio || 1;
 
-  const displayWidth = wrapper.clientWidth;
-  const displayHeight = wrapper.clientHeight;
+  const size = Math.min(wrapper.clientWidth, wrapper.clientHeight);
+  const displayWidth = size;
+  const displayHeight = size;
 
   canvas.width = displayWidth * dpr;
   canvas.height = displayHeight * dpr;

@@ -387,8 +387,8 @@ main {
 
 #canvas-wrapper {
   position: relative;
-  width: 100%;
-  max-width: 500px;
+  width: min(100%, 500px);
+  max-height: 100%;
   aspect-ratio: 1 / 1;
   background: repeating-conic-gradient(#2a2a3e 0% 25%, #222238 0% 50%) 0 0 / 20px 20px;
   border-radius: var(--radius);
