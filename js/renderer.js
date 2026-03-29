@@ -125,19 +125,24 @@ function drawBorder(ctx, w, h, border, colors) {
 
 export function renderPreview(canvas, state) {
   const wrapper = canvas.parentElement;
+  const panel = wrapper.parentElement;
   const dpr = window.devicePixelRatio || 1;
 
-  const size = Math.min(wrapper.clientWidth, wrapper.clientHeight);
-  const displayWidth = size;
-  const displayHeight = size;
+  // Determine the largest square that fits in the preview panel
+  const availW = panel.clientWidth - 48; // account for padding
+  const availH = panel.clientHeight - 48;
+  const size = Math.min(availW, availH, 500);
 
-  canvas.width = displayWidth * dpr;
-  canvas.height = displayHeight * dpr;
-  canvas.style.width = displayWidth + 'px';
-  canvas.style.height = displayHeight + 'px';
+  wrapper.style.width = size + 'px';
+  wrapper.style.height = size + 'px';
+
+  canvas.width = size * dpr;
+  canvas.height = size * dpr;
+  canvas.style.width = size + 'px';
+  canvas.style.height = size + 'px';
 
   const ctx = canvas.getContext('2d');
   ctx.scale(dpr, dpr);
 
-  render(ctx, displayWidth, displayHeight, state);
+  render(ctx, size, size, state);
 }
