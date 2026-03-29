@@ -1,6 +1,6 @@
 // export.js — High-resolution PNG/JPG export for Printify
 
-import { render } from './renderer.js?v=2';
+import { render } from './renderer.js';
 
 const EXPORT_WIDTH = 4500;
 const EXPORT_HEIGHT = 4500;

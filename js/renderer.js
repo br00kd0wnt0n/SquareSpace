@@ -1,6 +1,6 @@
 // renderer.js — Canvas rendering pipeline
 
-import { PATTERNS } from './patterns.js?v=2';
+import { PATTERNS } from './patterns.js';
 
 export function render(ctx, width, height, state) {
   const { pattern, colors, scale, rotation, border } = state;

@@ -1,8 +1,8 @@
 // app.js — Main application: state, UI binding, and control logic
 
-import { PATTERNS, getPatternList } from './patterns.js?v=2';
-import { renderPreview } from './renderer.js?v=2';
-import { exportImage } from './export.js?v=2';
+import { PATTERNS, getPatternList } from './patterns.js';
+import { renderPreview } from './renderer.js';
+import { exportImage } from './export.js';
 
 // ─── Application State ────────────────────────────────────────
 
